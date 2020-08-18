@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -33,10 +33,11 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        <!--
                         <div class="dropdown-menu" aria-labelledby="dropdownId">
                             <a class="dropdown-item" href="#">Action 1</a>
                             <a class="dropdown-item" href="#">Action 2</a>
-                        </div>
+                        </div> -->
                     </li>
                 </ul>
             </div>
@@ -47,7 +48,7 @@
                 <h1 class="text-center">Lyrics Search</h1>
                 <div class="search-box my-5">
                     <input type="text" id="form" class="form-control inputValue" placeholder="Enter your artist song name">
-                    <button class="btn btn-success search-btn" id="search">Search</button>
+                    <button class="btn btn-success search-btn" id="search" onclick="searched()">Search</button>
                 </div>
             </div>
             <!-- === Simple results === -->
@@ -220,7 +221,56 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <!-- Custom Script Here -->
-<script src="findSong.js"></script>
+
+    <script type="text/javascript">
+
+        function searched(){
+        var form = document.getElementById('form')
+        searchText = form.value.trim();
+        
+        if(!searchText){
+                alert("We didn't find anything")
+            }
+        
+        else{
+                searchSong(searchText)
+                alert("Searching : "+searchText);
+            }
+        }
+        
+        const result = document.getElementById('result')
+        const apiURL = 'https://api.lyrics.ovh' 
+        
+        // search song
+        async function searchSong(searchText){
+            const searchResult = await fetch(`${apiURL}/suggest/${searchText}`)
+            const data = await searchResult.json();
+            showData(data);
+            alert(data);
+        }
+        
+        
+        // updating DOM
+        function showData(data){
+            result.innerHTML = `
+            <ul class="song-list">
+            ${data.data.map(song =>`<li>
+                                    <div>
+                                        <strong>
+                                        ${song.artist.name}
+                                        </strong> -${song.title}
+                                    </div>
+                                    <span data-artist="${song.artist.name}" data-songtitle="${song.title}">
+                                        get lyrics
+                                    </span>
+                                    </li>
+            `).join('')
+        }
+        </ul>
+        `
+        }
+        
+        </script>
 </body>
 
 </html>
